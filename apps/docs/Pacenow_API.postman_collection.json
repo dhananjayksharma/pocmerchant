@@ -1,0 +1,200 @@
+{
+	"info": {
+		"_postman_id": "0cac7914-7920-45e0-a192-40b2d4d1496a",
+		"name": "Pacenow_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18124060"
+	},
+	"item": [
+		{
+			"name": "Merchant - Add",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Rediff\", \"address\":\"Mumbai\", \"code\":\"cadjq02gqpmvra18971\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8989/merchants/merchants",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"merchants",
+						"merchants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Merchants List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"dhananjay.sharma@gmail.com\",\"password\":\"123456abc\",\"clientCode\":\"CIL15052022CMSSPOTLIGHT\",\"clientAppCode\":\"CMSAPPUSR03\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8989/merchants/merchants",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"merchants",
+						"merchants"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Merchant List By Code",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"dhananjay.sharma@gmail.com\",\"password\":\"123456abc\",\"clientCode\":\"CIL15052022CMSSPOTLIGHT\",\"clientAppCode\":\"CMSAPPUSR03\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8989/merchants/merchant/cadjq02gqpmvra1scb0g",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"merchants",
+						"merchant",
+						"cadjq02gqpmvra1scb0g"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Merchant updated By Code",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Rediff\", \"address\":\"Mumbai, Ville Parle\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8989/merchants/merchant/cadjq02gqpmvra18971",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"merchants",
+						"merchant",
+						"cadjq02gqpmvra18971"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Team Member - Add",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"dhananjay@gmail.com\", \"firstName\":\"dhananjay\",\"lastName\":\"sharma\", \"code\":\"cadjq02gqpmvra18971\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8989/members/members",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"members",
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Merchant Team Members",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"Rediff\", \"address\":\"Mumbai\", \"code\":\"cadjq02gqpmvra18971\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8989/merchants/members/cadjq02gqpmvra18971?skip=0&limit=2",
+					"host": [
+						"localhost"
+					],
+					"port": "8989",
+					"path": [
+						"merchants",
+						"members",
+						"cadjq02gqpmvra18971"
+					],
+					"query": [
+						{
+							"key": "skip",
+							"value": "0"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

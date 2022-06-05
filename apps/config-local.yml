@@ -1,0 +1,12 @@
+ENV_VAR_RW: "db_one_readwrite"
+CONS_WEB_PORT: "0.0.0.0:8989"
+ENV_RUN_ENV : "Started service running as " 
+
+database:
+  db_one_readwrite:
+    dbname: "Pacenow_DemoDb"
+    dbuser: "root"
+    dbpassword: "root#123PD"
+    port: "3306"
+    hostname: "127.0.0.1:3306"
+

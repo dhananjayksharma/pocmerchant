@@ -1,0 +1,15 @@
+
+Testing collections:
+
+https://www.getpostman.com/collections/2ce33f8dd11b1d4f1e27
+
+
+
+
+mockgen -source=pkg/v1/models/merchant.go -destination=mocks/pkg/v1/merchant_mocks.go -package=mocks
+
+
+
+mockgen -source=pkg/v1/models/merchant.go -destination=pkg/mocks/merchant_mocks.go -package=mocks
+
+
