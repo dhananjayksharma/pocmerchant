@@ -1,0 +1,78 @@
+Steps to run application:
+
+
+Step 1:
+	unzip	pacenow-v3.demo.zip
+	
+	cd into folder "apps"
+
+Step 2:
+	Need to create database and import 
+	
+	apps/docs/databases/Pacenow_DemoDb.sql
+	
+	Change database credential:
+	
+	apps/config-local.yml
+	
+Step 3:
+	cd into folder "apps"
+	
+	go mod tidy
+
+	run app:
+		make all
+	
+	test app:
+		go test ./... -cover
+			
+		coverage: 61.8% of statements
+
+STEP 4:
+
+Test API with Postman collection:
+	apps/docs/Pacenow_API.postman_collection.json
+
+OR
+
+Test API on using curl:
+
+Merchant - Add:
+
+curl --location --request POST 'localhost:8989/merchants/merchants' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"Sony d ltd", "address":"Mumbai", "code":"cadjq02gqpmvljdrad98"}'
+
+
+
+Merchants List:
+
+curl --location --request GET 'localhost:8989/merchants/merchants' \
+--header 'Content-Type: application/json' \
+--data-raw '{"email":"dhananjay.sharma@gmail.com","password":"123456abc","clientCode":"CIL15052022CMSSPOTLIGHT","clientAppCode":"CMSAPPUSR03"}'
+
+
+
+Merchant updated By Code:
+
+curl --location --request PUT 'localhost:8989/merchants/merchant/cadjq02gqpmvra18971' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"Rediff", "address":"Mumbai, Ville Parle 222"}'
+
+
+
+Team Member - Add:
+
+curl --location --request POST 'localhost:8989/merchants/cadjq02gqpmvra1scb0g/member' \
+--header 'Content-Type: application/json' \
+--data-raw '{"email":"dhananjay333@gmail.com", "firstName":"dhananjay","lastName":"sharma"}'
+
+
+
+Merchant Team Members:
+
+curl --location --request GET 'localhost:8989/merchants/members/cadjq02gqpmvra18971?skip=0&limit=2' \
+--header 'Content-Type: application/json' \
+--data-raw '{"name":"Rediff", "address":"Mumbai", "code":"cadjq02gqpmvra18971"}'
+
+
