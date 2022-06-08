@@ -1,6 +1,6 @@
 .PHONY: all
 
-SERVICE_NAME := pacenow-service
+SERVICE_NAME := dkgosql-merchant-service-v3
 
 include .envrc
 
@@ -18,14 +18,14 @@ clean:
 .PHONY: exportvar
 
 exportvar:
-	# @export MICROSERVICECAUTHNEWAPI=local
-	@echo "[OK] Export var $(MICROSERVICECAUTHNEWAPI)"
+	# @export MICROSERVICECDEMONEWAPI=local
+	@echo "[OK] Export var $(MICROSERVICECDEMONEWAPI)"
 
 .PHONY: run
 
 run:
-	@./pacenow-service
-
+	@./dkgosql-merchant-service-v3
+	
 	#.PHONY: runasdocker
 
 	#runasdocker:
@@ -38,6 +38,10 @@ build:
 	@echo "[OK] Server was build!"
 
 .PHONY: test
+
+mock-gen:
+	mockgen -source pkg/v1/models/merchants/merchant.go -destination pkg/v1/models/mocks/merchant_mocks.go -package=mocks
+	mockgen -source internals/adapter/mysql/query/mysqlstore.go -destination pkg/v1/models/mocks/query_mysqlstore_mocks.go -package=mocks
 
 test:
 	@go test -v	

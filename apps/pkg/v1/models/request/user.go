@@ -5,7 +5,7 @@ type AddUserInputRequest struct {
 	FirstName string `json:"firstName" binding:"required,min=1,max=25,alphanum"`
 	LastName  string `json:"lastName" binding:"required,min=1,max=25,alphanum"`
 	Mobile    string `json:"mobile" binding:"omitempty,min=10,max=10,alphanum"`
-	Code      string `json:"code" binding:"required,min=16,max=24,alphanum"`
+	Code      string `json:"code"`
 }
 
 type ListUserInputRequest struct {

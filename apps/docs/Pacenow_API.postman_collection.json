@@ -66,38 +66,6 @@
 			"response": []
 		},
 		{
-			"name": "Merchant List By Code",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\"email\":\"dhananjay.sharma@gmail.com\",\"password\":\"123456abc\",\"clientCode\":\"CIL15052022CMSSPOTLIGHT\",\"clientAppCode\":\"CMSAPPUSR03\"}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "localhost:8989/merchants/merchant/cadjq02gqpmvra1scb0g",
-					"host": [
-						"localhost"
-					],
-					"port": "8989",
-					"path": [
-						"merchants",
-						"merchant",
-						"cadjq02gqpmvra1scb0g"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Merchant updated By Code",
 			"request": {
 				"method": "PUT",

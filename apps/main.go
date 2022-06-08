@@ -12,8 +12,12 @@ import (
 	"syscall"
 	"time"
 
-	"dkgosql.com/pacenow-service/pkg/adapter/mysql"
-	"dkgosql.com/pacenow-service/pkg/handlers"
+	"dkgosql-merchant-service-v3/internals/adapter/mysql"
+	"dkgosql-merchant-service-v3/internals/adapter/mysql/query"
+	"dkgosql-merchant-service-v3/internals/handlers"
+	"dkgosql-merchant-service-v3/pkg/v1/models/merchants"
+	"dkgosql-merchant-service-v3/pkg/v1/models/users"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -22,7 +26,7 @@ import (
 var logger *zap.SugaredLogger
 
 const (
-	serviceName = "dkgosql.com/pacenow-service"
+	serviceName = "dkgosql-merchant-service-v3"
 )
 
 //go:embed config.yml
@@ -30,17 +34,13 @@ var config embed.FS
 
 func startService() {
 	// Set the file name of the configurations file
-	if os.Getenv("MICROSERVICECAUTHNEWAPI") == "local" {
+	if os.Getenv("MICROSERVICECDEMONEWAPI") == "local" {
 		viper.SetConfigName("config-local")
-	} else if os.Getenv("MICROSERVICECAUTHNEWAPI") == "pre" {
-		viper.SetConfigName("config-pre")
-	} else if os.Getenv("MICROSERVICECAUTHNEWAPI") == "beta" {
-		viper.SetConfigName("config-beta")
 	} else {
 		viper.SetConfigName("config")
 	}
 
-	log.Println("Current Config :", os.Getenv("MICROSERVICECAUTHNEWAPI"))
+	log.Println("Current Config :", os.Getenv("MICROSERVICECDEMONEWAPI"))
 
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
@@ -57,8 +57,13 @@ func startService() {
 	} else {
 		fmt.Printf("dbConnection connected: %v, %T", dbConnection, dbConnection)
 	}
-	ssr := handlers.ServiceSetupRouter{DB: dbConnection}
-	router := ssr.SetupRouter()
+
+	db := query.NewMySQLDBStore(dbConnection)
+
+	merchantService := merchants.NewMerchantService(db)
+	userService := users.NewUserService(db)
+	
+	router := handlers.SetupRouter(merchantService, userService)
 	serverPort := viper.GetString("CONS_WEB_PORT")
 	log.Printf("API environment :%v", viper.GetString("ENV_RUN_ENV"))
 	listenAndServe(router, serverPort)
