@@ -2,9 +2,9 @@ package query
 
 import (
 	"context"
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/entities"
-	"dkgosql-merchant-service-v3/pkg/v1/models/request"
-	"dkgosql-merchant-service-v3/pkg/v1/models/response"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/entities"
+	"dkgosql-merchant-service-v4/pkg/v1/models/request"
+	"dkgosql-merchant-service-v4/pkg/v1/models/response"
 )
 
 type MockMySQLDBStore struct {
@@ -67,5 +67,10 @@ func (ms *MockMySQLDBStore) CreateMerchant(ctx context.Context, user *entities.M
 		Code:    "cadjq02gqpmvljdra98",
 	}
 	*user = data
+	return nil
+}
+
+// LoginUserByEmailID
+func (ms *MockMySQLDBStore) LoginUserByEmailID(ctx context.Context, userData *[]response.UserLoginResponse, queryParams request.LoginUserInputRequest) error {
 	return nil
 }

@@ -1,16 +1,17 @@
 .PHONY: all
 
-SERVICE_NAME := dkgosql-merchant-service-v3
+BINARY_NAME := dkgosql-merchant-service-v4
 
 include .envrc
 
-all: exportvar clean test build run
-	#run no use as 30Mar2022 runasdocker
+all: exportvar deps clean build run
+	#run no use as 30Mar2022 runasdocker		test
 
 .PHONY: clean
 
 clean:
-	@go clean
+	go clean
+	@-rm ${BINARY_NAME}-linux
 	@-rm -f cover.html cover.out
 	@-rm -f pacenow-service
 	@echo "[OK] Cover file and old build removed!"
@@ -21,20 +22,33 @@ exportvar:
 	# @export MICROSERVICECDEMONEWAPI=local
 	@echo "[OK] Export var $(MICROSERVICECDEMONEWAPI)"
 
+.PHONY: deps
+
+deps:
+	go mod tidy
+
 .PHONY: run
 
 run:
-	@./dkgosql-merchant-service-v3
+	@./${BINARY_NAME}
 	
 	#.PHONY: runasdocker
 
 	#runasdocker:
 	#	@echo docker build -t microservice-mediaphoto-service:v1 . && docker run --name services -p 8587:8587 -d microservice-mediaphoto-service:v1
+.PHONY: makedoc
+
+makedoc:
+	#@dummy
+
 
 .PHONY: build
 
 build:
-	@go build -o .
+	go clean
+	@go get -v
+	@go build -o ${BINARY_NAME} main.go
+	# go build -o ${BINARY_NAME}-linux main.go GOARCH=amd64 GOOS=linux 
 	@echo "[OK] Server was build!"
 
 .PHONY: test
@@ -44,6 +58,7 @@ mock-gen:
 	mockgen -source internals/adapter/mysql/query/mysqlstore.go -destination pkg/v1/models/mocks/query_mysqlstore_mocks.go -package=mocks
 
 test:
+	go test ./...
 	@go test -v	
 	@echo "[OK] Test and coverage file was created!"
 

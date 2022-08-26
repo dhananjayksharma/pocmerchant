@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"dkgosql-merchant-service-v3/internals/util"
-	"dkgosql-merchant-service-v3/pkg/v1/models/merchants"
+	"dkgosql-merchant-service-v4/internals/middleware"
+	"dkgosql-merchant-service-v4/internals/util"
+	"dkgosql-merchant-service-v4/pkg/v1/models/merchants"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,6 +27,13 @@ func NewMerchantHandler(service merchants.MerchantService) MerchantHandler {
 
 // GetMerchantList
 func (srv *merchantHandler) GetMerchantList(c *gin.Context) {
+
+	err := middleware.Claim(c)
+	if err != nil {
+		util.HandleError(c, err)
+		return
+	}
+
 	resp, err := srv.service.GetMerchantList(c)
 	if err != nil {
 		util.HandleError(c, err)

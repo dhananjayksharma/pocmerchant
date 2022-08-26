@@ -2,11 +2,11 @@ package query
 
 import (
 	"context"
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/entities"
-	"dkgosql-merchant-service-v3/internals/consts"
-	"dkgosql-merchant-service-v3/internals/util"
-	"dkgosql-merchant-service-v3/pkg/v1/models/request"
-	"dkgosql-merchant-service-v3/pkg/v1/models/response"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/entities"
+	"dkgosql-merchant-service-v4/internals/consts"
+	"dkgosql-merchant-service-v4/internals/util"
+	"dkgosql-merchant-service-v4/pkg/v1/models/request"
+	"dkgosql-merchant-service-v4/pkg/v1/models/response"
 	"fmt"
 	"log"
 	"strings"
@@ -31,6 +31,8 @@ type MySQLDBStoreAccess interface {
 	CreateMerchantMember(ctx context.Context, user *entities.Users) error
 
 	ListMembersByCode(ctx context.Context, user *[]response.MerchantsMembersResponse, queryParams request.QueryMembersInputRequest) error
+
+	LoginUserByEmailID(ctx context.Context, userData *[]response.UserLoginResponse, queryParams request.LoginUserInputRequest) error
 }
 
 // CreateMerchantMember
@@ -90,10 +92,26 @@ func (ms *mySQLDBStore) CreateMerchant(ctx context.Context, merchant *entities.M
 func (ms *mySQLDBStore) ListMerchantByID(ctx context.Context, merchantData *[]response.MerchantResponse, code string) error {
 
 	log.Println("ListMerchantByID ")
-	result := ms.db.WithContext(ctx).Model(&response.MerchantResponse{}).Select("code, name, address, status, created_at, updated_at").Where("code=?", code).Scan(&merchantData)
+	result := ms.db.Debug().WithContext(ctx).Model(&response.MerchantResponse{}).Select("code, name, address, status, created_at, updated_at").Where("code=?", code).Scan(&merchantData)
 	if result.RowsAffected == 0 {
 		return &util.DataNotFound{ErrMessage: fmt.Sprintf(consts.ErrorDataNotFoundCode, code)}
 	}
+	err := result.Error
+	if err != nil {
+		return &util.InternalServer{ErrMessage: err.Error()}
+	}
+	return nil
+}
+
+// ListMembersByCode
+func (ms *mySQLDBStore) LoginUserByEmailID(ctx context.Context, userData *[]response.UserLoginResponse, queryParams request.LoginUserInputRequest) error {
+
+	result := ms.db.Debug().WithContext(ctx).Model(&response.UserLoginResponse{}).Select("users.fk_code, users.first_name, users.last_name, users.email, users.mobile, users.password, users.is_active, users.created_at, merchants.name as MerchantName").Joins("left join merchants on merchants.code = users.fk_code").Where("fk_code=? AND users.email=?", queryParams.Code, queryParams.Email).Scan(&userData)
+
+	if result.RowsAffected == 0 {
+		return &util.DataNotFound{ErrMessage: fmt.Sprintf(consts.ErrorUserNotFoundCode, queryParams.Code)}
+	}
+	
 	err := result.Error
 	if err != nil {
 		return &util.InternalServer{ErrMessage: err.Error()}

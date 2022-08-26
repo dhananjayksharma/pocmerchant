@@ -13,11 +13,16 @@ const (
 
 	ErrorDataNotFoundCode = "Merchant data not found for given code %v"
 
+	ErrorUserNotFoundCode = "User not found for given code %v"
+
 	InvalidUserDocId    = "Invalid user code input request "
 	InvalidMerchantCode = "Invalid client code input request "
 	InvalidAppCode      = "Invalid client app code input request "
 
+	UserLoginSuccess       = "User login successfully"
 	UserAddedSuccess       = "User added successfully"
+	TokenRegeneatedSuccess = "Token Regenerated successfully"
+
 	MerchantAddedSuccess   = "Merchant added successfully"
 	MerchantUpdatedSuccess = "Merchant updated successfully for code: %v"
 	PageLimitMessage       = "Invalid page limit"

@@ -5,29 +5,9 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
-
-func GetMovieActiveStatusById(num uint8) string {
-	//	Cinema : movie_master : movie_is_active = 0-Deleted, 1-Active, 2-Inactive
-	movie_is_active := map[int]string{0: "Deleted", 1: "Active", 2: "Inactive"}
-
-	out, status := movie_is_active[int(num)]
-	if status {
-		return out
-	}
-	return "Not Available"
-}
-
-func GetMovieStatusById(num uint8) string {
-	//	Cinema : movie_master : movie_status = 1. Announced / 2. Work In Progress / 3. Upcoming / 4. Released / 5. Stalled / 6. Cancelled / 7. Now Running / 8. Next Change / 9. Pre-production / 10. Post-production / 11. Unreleased
-	movie_status := map[int]string{1: "Announced", 2: "Work In Progress", 3: "Upcoming", 4: "Released", 5: "Stalled", 6: "Cancelled", 7: "Now Running", 8: "Next Change", 9: "Pre-production", 10: "Post-production", 11: "Unreleased"}
-
-	out, status := movie_status[int(num)]
-	if status {
-		return out
-	}
-	return "Not Available"
-}
 
 func GetSplit(stringvalues, strseparate, strjoin string) string { //ids := "546,545,2171"
 	idsslice := strings.Split(stringvalues, strseparate)
@@ -63,4 +43,16 @@ func GetBucketNumberFileName(id, uniqueIdName string) (string, error) {
 	bucket := i % 10000
 	bucketName := fmt.Sprintf("%v/%v%s", bucket, uniqueIdName, ".json")
 	return bucketName, nil
+}
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	fmt.Println("HERE IN password:", hash)
+	fmt.Println("HERE DB password:", password)
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

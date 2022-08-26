@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"dkgosql-merchant-service-v3/pkg/v1/models/merchants"
-	"dkgosql-merchant-service-v3/pkg/v1/models/users"
+	"dkgosql-merchant-service-v4/internals/middleware"
+	"dkgosql-merchant-service-v4/pkg/v1/models/merchants"
+	"dkgosql-merchant-service-v4/pkg/v1/models/users"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -24,13 +25,17 @@ func SetupRouter(merchantService merchants.MerchantService, userService users.Us
 	{
 		v1Group := r.Group("/merchants")
 		{
+			secured := v1Group.Group("/secured").Use(middleware.Auth())
+			{
+				secured.PUT("/merchant/:code", merchantHandler.UpdateMerchantByID)
+				secured.POST("/merchants", merchantHandler.CreateMerchant)
+				secured.GET("/merchants", merchantHandler.GetMerchantList) //.Use(auth.GetClaim(c))
+				secured.GET("/members/:code", userHandler.ListMembersByCode)
+				secured.POST("/:code/member", userHandler.CreateMerchantMember)
+			}
 
-			v1Group.PUT("/merchant/:code", merchantHandler.UpdateMerchantByID)
-			v1Group.POST("/merchants", merchantHandler.CreateMerchant)
-			v1Group.GET("/merchants", merchantHandler.GetMerchantList)
-
-			v1Group.GET("/members/:code", userHandler.ListMembersByCode)
-			v1Group.POST("/:code/member", userHandler.CreateMerchantMember)
+			v1Group.POST("/member/login", userHandler.LoginMember)
+			v1Group.GET("/member/refresh", userHandler.RefreshToken)
 
 		}
 	}

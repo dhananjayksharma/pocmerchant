@@ -12,11 +12,11 @@ import (
 	"syscall"
 	"time"
 
-	"dkgosql-merchant-service-v3/internals/adapter/mysql"
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/query"
-	"dkgosql-merchant-service-v3/internals/handlers"
-	"dkgosql-merchant-service-v3/pkg/v1/models/merchants"
-	"dkgosql-merchant-service-v3/pkg/v1/models/users"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/query"
+	"dkgosql-merchant-service-v4/internals/handlers"
+	"dkgosql-merchant-service-v4/pkg/v1/models/merchants"
+	"dkgosql-merchant-service-v4/pkg/v1/models/users"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -26,7 +26,7 @@ import (
 var logger *zap.SugaredLogger
 
 const (
-	serviceName = "dkgosql-merchant-service-v3"
+	serviceName = "dkgosql-merchant-service-v4"
 )
 
 //go:embed config.yml
@@ -62,7 +62,7 @@ func startService() {
 
 	merchantService := merchants.NewMerchantService(db)
 	userService := users.NewUserService(db)
-	
+
 	router := handlers.SetupRouter(merchantService, userService)
 	serverPort := viper.GetString("CONS_WEB_PORT")
 	log.Printf("API environment :%v", viper.GetString("ENV_RUN_ENV"))

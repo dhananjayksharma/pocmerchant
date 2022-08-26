@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/entities"
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/query"
-	"dkgosql-merchant-service-v3/internals/consts"
-	"dkgosql-merchant-service-v3/internals/util"
-	"dkgosql-merchant-service-v3/pkg/v1/models"
-	"dkgosql-merchant-service-v3/pkg/v1/models/request"
-	"dkgosql-merchant-service-v3/pkg/v1/models/response"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/entities"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/query"
+	"dkgosql-merchant-service-v4/internals/consts"
+	"dkgosql-merchant-service-v4/internals/util"
+	"dkgosql-merchant-service-v4/pkg/v1/models"
+	"dkgosql-merchant-service-v4/pkg/v1/models/request"
+	"dkgosql-merchant-service-v4/pkg/v1/models/response"
 
 	"github.com/gin-gonic/gin"
 )

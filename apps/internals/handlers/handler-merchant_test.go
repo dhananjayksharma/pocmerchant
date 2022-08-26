@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"bytes"
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/query"
-	"dkgosql-merchant-service-v3/pkg/v1/models/merchants"
-	"dkgosql-merchant-service-v3/pkg/v1/models/response"
-	"dkgosql-merchant-service-v3/pkg/v1/models/users"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/query"
+	"dkgosql-merchant-service-v4/pkg/v1/models/merchants"
+	"dkgosql-merchant-service-v4/pkg/v1/models/response"
+	"dkgosql-merchant-service-v4/pkg/v1/models/users"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -41,6 +41,7 @@ func TestGetMerchantList(t *testing.T) {
 		rr := httptest.NewRecorder()
 
 		request, err := http.NewRequest(http.MethodGet, "/merchants/merchants", nil)
+		request.Header.Set("Token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRoYW5hbmpheSBzaGFybWEiLCJlbWFpbCI6ImRoYW5hbmpheTMzMzMxQGdtYWlsLmNvbSIsImV4cCI6MTY2MDgyMzE5MH0.1GjfH0aq5qFF-Mp9x83Gz9X_B0ua2PyhX01uAVjiiOQ")
 		assert.NoError(t, err)
 		router.ServeHTTP(rr, request)
 		assert.Equal(t, http.StatusOK, rr.Code)

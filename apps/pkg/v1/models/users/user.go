@@ -8,13 +8,14 @@ import (
 	"strings"
 	"time"
 
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/entities"
-	"dkgosql-merchant-service-v3/internals/adapter/mysql/query"
-	"dkgosql-merchant-service-v3/internals/consts"
-	"dkgosql-merchant-service-v3/internals/util"
-	"dkgosql-merchant-service-v3/pkg/v1/models"
-	"dkgosql-merchant-service-v3/pkg/v1/models/request"
-	"dkgosql-merchant-service-v3/pkg/v1/models/response"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/entities"
+	"dkgosql-merchant-service-v4/internals/adapter/mysql/query"
+	"dkgosql-merchant-service-v4/internals/auth"
+	"dkgosql-merchant-service-v4/internals/consts"
+	"dkgosql-merchant-service-v4/internals/util"
+	"dkgosql-merchant-service-v4/pkg/v1/models"
+	"dkgosql-merchant-service-v4/pkg/v1/models/request"
+	"dkgosql-merchant-service-v4/pkg/v1/models/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,6 +23,8 @@ import (
 type UserService interface {
 	ListMembersByCode(c *gin.Context) (models.Response, error)
 	CreateMerchantMember(c *gin.Context) (models.Response, error)
+	LoginMember(c *gin.Context) (models.Response, error)
+	RefreshToken(c *gin.Context) (models.Response, error)
 }
 
 type userService struct {
@@ -30,6 +33,89 @@ type userService struct {
 
 func NewUserService(db query.MySQLDBStoreAccess) UserService {
 	return &userService{db: db}
+}
+
+func (service userService) RefreshToken(c *gin.Context) (models.Response, error) {
+	var resp = models.Response{}
+	tokenString := c.GetHeader("RefreshToken")
+	if tokenString == "" {
+		err := errors.New("request does not contain a refresh token")
+		if err != nil {
+			return resp, err
+		}
+	}
+	err := auth.ValidateRefreshToken(tokenString)
+	if err != nil {
+		fmt.Printf("auth.ValidateRefreshToken %v", err)
+		return resp, err
+	}
+
+	claims, err := auth.GetRefreshClaim(tokenString)
+	fmt.Printf("Username refresh token %v", claims.Username)
+	fmt.Printf("Email refresh token %v", claims.Email)
+
+	var responseUserLogin []response.UserLoginResponse
+
+	userName := claims.Username
+	token, refreshToken, err := auth.GenerateJWT(claims.Email, userName)
+	if err != nil {
+		return resp, err
+	}
+	responseUserLogin = append(responseUserLogin, response.UserLoginResponse{Token: token, ResetToken: refreshToken})
+	// responseUserLogin[0].Token = token
+	// responseUserLogin[0].ResetToken = refreshToken
+	resp.Data = responseUserLogin
+	resp.Message = consts.TokenRegeneatedSuccess
+	return resp, nil
+}
+
+func (service userService) LoginMember(c *gin.Context) (models.Response, error) {
+	// set context
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
+	var resp = models.Response{}
+
+	var loginUserRequest request.LoginUserInputRequest
+	if err := c.BindJSON(&loginUserRequest); err != nil {
+		return resp, &util.BadRequest{ErrMessage: err.Error()}
+	}
+	var responseMerchant []response.MerchantResponse
+	err := service.db.ListMerchantByID(ctx, &responseMerchant, loginUserRequest.Code)
+	if err != nil {
+		return resp, err
+	}
+	// fmt.Printf("%v", len(responseMerchant))
+
+	if len(responseMerchant) == 0 {
+		err = errors.New(fmt.Sprintf(consts.ErrorDataNotFoundCode, loginUserRequest.Code))
+		return resp, err
+	}
+
+	// hashpassword, _ := util.HashPassword(loginUserRequest.Password)
+
+	var responseUserLogin []response.UserLoginResponse
+	err = service.db.LoginUserByEmailID(ctx, &responseUserLogin, loginUserRequest)
+	if err != nil {
+		return resp, err
+	}
+
+	passsword_match := util.CheckPasswordHash(loginUserRequest.Password, responseUserLogin[0].Password)
+	// fmt.Println("passsword_match status:", passsword_match)
+
+	if !passsword_match {
+		err = errors.New("Password did not matching")
+		return resp, err
+	}
+	userName := fmt.Sprintf("%s %s", responseUserLogin[0].FirstName, responseUserLogin[0].LastName)
+	token, refreshToken, err := auth.GenerateJWT(responseUserLogin[0].Email, userName)
+	if err != nil {
+		return resp, err
+	}
+	responseUserLogin[0].Token = token
+	responseUserLogin[0].ResetToken = refreshToken
+	resp.Data = responseUserLogin
+	resp.Message = consts.UserLoginSuccess
+	return resp, nil
 }
 
 func (service userService) CreateMerchantMember(c *gin.Context) (models.Response, error) {
@@ -58,7 +144,7 @@ func (service userService) CreateMerchantMember(c *gin.Context) (models.Response
 	if err := c.BindJSON(&addUserRequest); err != nil {
 		return resp, &util.BadRequest{ErrMessage: err.Error()}
 	}
-
+	hashpassword, _ := util.HashPassword(addUserRequest.Password)
 	var status uint8
 	status = uint8(consts.ActiveStatus)
 	addUser := entities.Users{
@@ -68,6 +154,7 @@ func (service userService) CreateMerchantMember(c *gin.Context) (models.Response
 		UpdatedAt: time.Now(),
 		CreatedAt: time.Now(),
 		FkCode:    code,
+		Password:  hashpassword,
 		Email:     addUserRequest.Email,
 	}
 
@@ -127,7 +214,8 @@ func (srv *userService) ListMembersByCode(c *gin.Context) (models.Response, erro
 	}
 	var responseUser []response.MerchantsMembersResponse
 	for _, row := range userData {
-		responseUser = append(responseUser, response.MerchantsMembersResponse{IsActive: row.IsActive,
+		responseUser = append(responseUser, response.MerchantsMembersResponse{
+			IsActive:     row.IsActive,
 			FirstName:    row.FirstName,
 			LastName:     row.LastName,
 			Email:        row.Email,

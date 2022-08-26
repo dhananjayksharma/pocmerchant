@@ -10,4 +10,3 @@ type UpdateMerchantInputRequest struct {
 	Name    string `json:"name" binding:"required,min=5,max=55"`
 	Address string `json:"address" binding:"required,min=5,max=465"`
 }
-
