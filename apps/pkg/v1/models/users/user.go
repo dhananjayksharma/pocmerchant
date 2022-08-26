@@ -10,12 +10,13 @@ import (
 
 	"dkgosql-merchant-service-v4/internals/adapter/mysql/entities"
 	"dkgosql-merchant-service-v4/internals/adapter/mysql/query"
-	"dkgosql-merchant-service-v4/internals/auth"
 	"dkgosql-merchant-service-v4/internals/consts"
 	"dkgosql-merchant-service-v4/internals/util"
 	"dkgosql-merchant-service-v4/pkg/v1/models"
 	"dkgosql-merchant-service-v4/pkg/v1/models/request"
 	"dkgosql-merchant-service-v4/pkg/v1/models/response"
+
+	auth "github.com/dhananjayksharma/dkgo-auth/auth"
 
 	"github.com/gin-gonic/gin"
 )

@@ -75,4 +75,22 @@ curl --location --request GET 'localhost:8989/merchants/members/cadjq02gqpmvra18
 --header 'Content-Type: application/json' \
 --data-raw '{"name":"Rediff", "address":"Mumbai", "code":"cadjq02gqpmvra18971"}'
 
+----
 
+go mod init github.com/dhananjayksharma/dkgo-auth/auth
+GOPROXY=proxy.golang.org go list -m github.com/dhananjayksharma/dkgo-auth/auth@v0.1.2
+go get github.com/dhananjayksharma/dkgo-auth@v0.1.2
+go mod tidy
+make all
+
+git status
+git branch --unset-upstream
+git status
+git branch
+git push origin master 
+git push origin v0.1.0
+git add . -A
+git commit -m "dkgo-auth module: changes for v0.1.1"
+git push origin master 
+git tag v0.1.1
+git push --tags
